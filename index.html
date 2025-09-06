@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Alquiler de Autos Online</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4f6f9;
+      color: #333;
+    }
+    header {
+      background: #2c3e50;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    main {
+      padding: 20px;
+      max-width: 900px;
+      margin: auto;
+    }
+    section {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
+    h2 {
+      color: #2c3e50;
+    }
+    form label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    input,
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+    input[type="submit"],
+    button {
+      background: #27ae60;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    input[type="submit"]:hover,
+    button:hover {
+      background: #2ecc71;
+    }
+    .reserva {
+      background: #ecf0f1;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+    #sistema,
+    #infoAuto,
+    #formReserva,
+    #listaReservas,
+    #registro {
+      display: none;
+    }
+    .link {
+      color: #2980b9;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    /* Estilo para la imagen del auto */
+    .img-auto {
+      width: 100%;
+      max-width: 400px;
+      height: auto;
+      display: block;
+      margin: 10px auto;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🚘 Alquiler de Autos Online</h1>
+  </header>
+  <main>
+    <body>
+    <!-- Login -->
+    <section id="login">
+      <h2>Iniciar Sesión</h2>
+      <form onsubmit="login(event)">
+        <label for="usuario">Usuario:</label>
+        <input type="text" id="usuario" required />
+
+        <label for="clave">Contraseña:</label>
+        <input type="password" id="clave" required />
+
+        <input type="submit" value="Entrar" />
+      </form>
+      <p id="errorLogin" style="color: red; display: none;">❌ Usuario o contraseña incorrectos</p>
+      <p>
+        ¿No tienes cuenta?
+        <span class="link" onclick="mostrarRegistro()">Regístrate aquí</span>
+      </p>
+    </section>
+    <!-- Registro -->
+    <section id="registro">
+      <h2>Registro de Usuario</h2>
+      <form onsubmit="registrar(event)">
+        <label for="nombreReg">Nombre completo:</label>
+        <input type="text" id="nombreReg" required />
+
+        <label for="correoReg">Correo electrónico:</label>
+        <input type="email" id="correoReg" required />
+
+        <label for="usuarioReg">Usuario:</label>
+        <input type="text" id="usuarioReg" required />
+
+        <label for="claveReg">Contraseña:</label>
+        <input type="password" id="claveReg" required />
+
+        <input type="submit" value="Registrarse" />
+      </form>
+      <p id="exitoRegistro" style="color: green; display: none;">
+        ✅ Registro exitoso, ahora puedes iniciar sesión
+      </p>
+      <p>
+        ¿Ya tienes cuenta?
+        <span class="link" onclick="mostrarLogin()">Inicia sesión aquí</span>
+      </p>
+    </section>
+    <!-- Sistema de alquiler -->
+    <div id="sistema">
+      <!-- Sección de búsqueda -->
+      <section>
+        <h2>Busca tu auto</h2>
+        <form id="formBusqueda" onsubmit="buscarAutos(event)">
+          <label for="lugar">Lugar de recogida:</label>
+          <input type="text" id="lugar" required />
+
+          <label for="fechaInicio">Fecha de recogida:</label>
+          <input type="date" id="fechaInicio" required />
+
+          <label for="fechaFin">Fecha de devolución:</label>
+          <input type="date" id="fechaFin" required />
+
+          <input type="submit" value="Buscar autos disponibles" />
+        </form>
+      </section>
+
+      <!-- Resultados de autos -->
+      <section>
+        <h2>Autos disponibles</h2>
+        <div id="autosDisponibles">
+          <p>Primero busca un auto para ver opciones.</p>
+        </div>
+      </section>
+
+      <!-- Información del auto elegido -->
+      <section id="infoAuto">
+        <h2>Información del Auto</h2>
+        <div id="detalleAuto"></div>
+        <button onclick="mostrarFormulario()">Reservar</button>
+      </section>
+
+      <!-- Formulario de reserva -->
+      <section id="formReserva">
+        <h2>Formulario de Reserva</h2>
+        <form onsubmit="guardarReserva(event)">
+          <label for="nombre">Nombre completo:</label>
+          <input type="text" id="nombre" required />
+
+          <label for="email">Correo electrónico:</label>
+          <input type="email" id="email" required />
+
+          <label for="telefono">Teléfono:</label>
+          <input type="tel" id="telefono" required />
+
+          <label for="auto">Auto seleccionado:</label>
+          <input type="text" id="auto" readonly required />
+
+          <input type="submit" value="Confirmar Reserva" />
+        </form>
+      </section>
+
+      <!-- Consultar reservas -->
+      <section>
+        <h2>Consultar Reservas</h2>
+        <button onclick="toggleReservas()">Ver mis reservas</button>
+        <div id="listaReservas"></div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    let reservas = [];
+    let ultimaBusqueda = {};
+    let autoSeleccionado = null;
+    let usuarios = [];
+    let usuarioActual = null;
+
+    const autos = [
+      { nombre: "Chevrolet Spark", precio: 120000, descripcion: "Económico, ideal para la ciudad." },
+      { nombre: "Kia Sportage", precio: 200000, descripcion: "SUV cómoda y espaciosa." },
+      { nombre: "Toyota Hilux", precio: 300000, descripcion: "Pickup potente para todo terreno." },
+      { nombre: "Mazda 3", precio: 180000, descripcion: "Sedán moderno y eficiente." },
+      { nombre: "Nissan Sentra", precio: 170000, descripcion: "Confortable y seguro para viajes." },
+      { nombre: "Ford Explorer", precio: 350000, descripcion: "SUV premium de 7 pasajeros." },
+      { nombre: "Renault Duster", precio: 190000, descripcion: "SUV versátil para ciudad y campo." },
+      { nombre: "Hyundai Tucson", precio: 210000, descripcion: "SUV confiable y moderna." },
+    ];
+
+    function mostrarRegistro() {
+      document.getElementById("login").style.display = "none";
+      document.getElementById("registro").style.display = "block";
+    }
+
+    function mostrarLogin() {
+      document.getElementById("registro").style.display = "none";
+      document.getElementById("login").style.display = "block";
+    }
+
+    function registrar(event) {
+      event.preventDefault();
+      let nombre = document.getElementById("nombreReg").value;
+      let correo = document.getElementById("correoReg").value;
+      let user = document.getElementById("usuarioReg").value;
+      let pass = document.getElementById("claveReg").value;
+
+      if (usuarios.find((u) => u.user === user)) {
+        alert("❌ El usuario ya existe, elige otro.");
+        return;
+      }
+
+      usuarios.push({ nombre: nombre, correo: correo, user: user, pass: pass });
+      document.getElementById("exitoRegistro").style.display = "block";
+      document.getElementById("registro").reset;
+    }
+
+    function login(event) {
+      event.preventDefault();
+      let user = document.getElementById("usuario").value;
+      let pass = document.getElementById("clave").value;
+
+      let encontrado = usuarios.find((u) => u.user === user && u.pass === pass);
+
+      if (encontrado) {
+        usuarioActual = encontrado;
+        document.getElementById("login").style.display = "none";
+        document.getElementById("registro").style.display = "none";
+        document.getElementById("sistema").style.display = "block";
+      } else {
+        document.getElementById("errorLogin").style.display = "block";
+      }
+    }
+
+    function buscarAutos(event) {
+      event.preventDefault();
+      ultimaBusqueda = {
+        lugar: document.getElementById("lugar").value,
+        fechaInicio: document.getElementById("fechaInicio").value,
+        fechaFin: document.getElementById("fechaFin").value,
+      };
+
+      let autosDisponibles = document.getElementById("autosDisponibles");
+      autosDisponibles.innerHTML = "";
+
+      let cantidad = Math.floor(Math.random() * 3) + 2;
+      let autosAleatorios = [...autos].sort(() => Math.random() - 0.5).slice(0, cantidad);
+
+      autosAleatorios.forEach((auto) => {
+        autosDisponibles.innerHTML += `
+          <article>
+            <h3>${auto.nombre}</h3>
+            <p>Precio por día: $${auto.precio.toLocaleString()}</p>
+            <button onclick="mostrarInfoAuto('${auto.nombre}')">Ver información</button>
+          </article>
+        `;
+      });
+    }
+
+    function mostrarInfoAuto(nombreAuto) {
+      autoSeleccionado = autos.find((a) => a.nombre === nombreAuto);
+      let detalle = document.getElementById("detalleAuto");
+
+      // Genera el nombre de la imagen basado en el nombre del auto
+      const nombreImagen = autoSeleccionado.nombre.toLowerCase().replace(/ /g, "_") + ".jpg";
+      const rutaImagen = `img/${nombreImagen}`;
+
+      detalle.innerHTML = `
+        <h3>${autoSeleccionado.nombre}</h3>
+        <img src="${rutaImagen}" alt="${autoSeleccionado.nombre}" class="img-auto" />
+        <p>${autoSeleccionado.descripcion}</p>
+        <p><strong>Precio por día:</strong> $${autoSeleccionado.precio.toLocaleString()}</p>
+      `;
+
+      document.getElementById("infoAuto").style.display = "block";
+    }
+
+    function mostrarFormulario() {
+      document.getElementById("formReserva").style.display = "block";
+      document.getElementById("auto").value = autoSeleccionado.nombre;
+    }
+
+    function guardarReserva(event) {
+      event.preventDefault();
+
+      let nombre = document.getElementById("nombre").value;
+      let email = document.getElementById("email").value;
+      let telefono = document.getElementById("telefono").value;
+      let auto = document.getElementById("auto").value;
+
+      let nuevaReserva = {
+        usuario: usuarioActual.user,
+        nombre: nombre,
+        email: email,
+        telefono: telefono,
+        auto: auto,
+        lugar: ultimaBusqueda.lugar,
+        fechaInicio: ultimaBusqueda.fechaInicio,
+        fechaFin: ultimaBusqueda.fechaFin,
+      };
+
+      reservas.push(nuevaReserva);
+      alert("✅ Reserva confirmada para " + nombre);
+
+      document.getElementById("formReserva").reset();
+      document.getElementById("formReserva").style.display = "none";
+      document.getElementById("infoAuto").style.display = "none";
+    }
+
+    function toggleReservas() {
+      let lista = document.getElementById("listaReservas");
+      if (lista.style.display === "none" || lista.innerHTML === "") {
+        mostrarReservas();
+        lista.style.display = "block";
+      } else {
+        lista.style.display = "none";
+      }
+    }
+
+    function mostrarReservas() {
+      let lista = document.getElementById("listaReservas");
+      lista.innerHTML = "";
+
+      let reservasUsuario = reservas.filter((r) => r.usuario === usuarioActual.user);
+
+      if (reservasUsuario.length === 0) {
+        lista.innerHTML = "<p>No tienes reservas registradas todavía.</p>";
+      } else {
+        reservasUsuario.forEach((r, i) => {
+          lista.innerHTML += `
+            <div class="reserva">
+              <strong>Reserva #${i + 1}</strong><br />
+              Nombre: ${r.nombre} <br />
+              Email: ${r.email} <br />
+              Teléfono: ${r.telefono} <br />
+              Auto: ${r.auto} <br />
+              Lugar de recogida: ${r.lugar} <br />
+              Fecha inicio: ${r.fechaInicio} <br />
+              Fecha fin: ${r.fechaFin}
+            </div>
+          `;
+        });
+      }
+    }
+  </script>
+</body>
+</html>
